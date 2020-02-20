@@ -5,16 +5,19 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 
 import 'package:loginuser/src/models/producto_model.dart';
+import 'package:loginuser/src/shared_pref/prefeencias_usuario.dart';
 import 'package:mime_type/mime_type.dart';
 export 'package:loginuser/src/models/producto_model.dart';
 
 class ProductosProvider{
 
   final String urlBase = 'https://flutter-ecomerce-bf829.firebaseio.com';
+  final _prefs = PreferenciasUsuario();
+
 
   Future<bool> crearProdcuto(ProductoModel producto) async{
 
-    final url = '$urlBase/productos.json';
+    final url = '$urlBase/productos.json?auth=${_prefs.token}';
 
     final response = await http.post(url, body: productoModelToJson(producto));
 
@@ -27,7 +30,7 @@ class ProductosProvider{
 
   Future<bool> editarProdcuto(ProductoModel producto) async{
 
-    final url = '$urlBase/productos/${producto.id}.json';
+    final url = '$urlBase/productos/${producto.id}.json?auth=${_prefs.token}';
 
     final response = await http.put(url, body: productoModelToJson(producto));
 
@@ -38,7 +41,7 @@ class ProductosProvider{
   }
 
   Future<List<ProductoModel>> cargarProductos() async{
-    final url = '$urlBase/productos.json';
+    final url = '$urlBase/productos.json?auth=${_prefs.token}';
 
     final response = await http.get(url);
 
@@ -63,7 +66,7 @@ class ProductosProvider{
 
   Future<bool> borrarProducto(String id) async {
 
-    final url = '$urlBase/productos/$id.json';
+    final url = '$urlBase/productos/$id.json?auth=${_prefs.token}';
 
     final response = await http.delete(url);
   }

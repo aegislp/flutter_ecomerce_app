@@ -3,36 +3,35 @@ import 'package:loginuser/src/bloc/provider.dart';
 import 'package:loginuser/src/pages/home_page.dart';
 import 'package:loginuser/src/pages/signup_page.dart';
 import 'package:loginuser/src/providers/users_provider.dart';
-import 'package:loginuser/src/utils/utils.dart' as utils;
+import 'package:loginuser/src/utils/utils.dart' as utils; 
+import 'login_page.dart';
 
-class LoginPage extends StatelessWidget {
 
-  static final routeName = 'login';
-  final userProvider = UserProvider();
+class SignupPage extends StatelessWidget {
 
+  static final routeName = 'signup';
+  final userProvider =  new UserProvider();
+
+  
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
       body: Stack(
         children: <Widget>[
-                    Text("Crear una nueva cuenta"),
-
           _createBackground(context),
           Column(
             children: <Widget>[
                _createLoginForm(context),
-               FlatButton(
-            child: Text("Crear una nueva cuenta"),
-            onPressed: (){
-              Navigator.of(context).pushNamed(SignupPage.routeName);
-            },
-          ),
-          SizedBox(height: 100.0,)
+              FlatButton(
+                child: Text("¿Ya tiene cuneta?"),
+                onPressed: ()=> Navigator.of(context).pushNamed(LoginPage.routeName),
+              ),
+              SizedBox(height: 100.0,)
             ],
           )
          
-          
-          
         ],
       )
     );
@@ -69,7 +68,7 @@ class LoginPage extends StatelessWidget {
             ),
             child: Column(
               children: <Widget>[
-                Text("Ingreso",style: TextStyle(fontSize: 20.0),),
+                Text("Registro",style: TextStyle(fontSize: 20.0),),
                 _createEmailIput(bloc),
                 _createPassInput(bloc),
                 _createButton(bloc),
@@ -187,7 +186,7 @@ class LoginPage extends StatelessWidget {
         return RaisedButton(
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 80.0, vertical: 20.0),
-            child: Text("Ingresar"),
+            child: Text("Registrar"),
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(5)
@@ -195,7 +194,7 @@ class LoginPage extends StatelessWidget {
           elevation: 0.0,
           color: Colors.deepPurple,
           textColor: Colors.white,
-          onPressed: snapshot.hasData ? ()=>_login(bloc,context) : null,
+          onPressed: snapshot.hasData ? ()=>_registro(bloc,context) : null,
         );
       },
     );
@@ -204,9 +203,9 @@ class LoginPage extends StatelessWidget {
     
   }
 
-  _login(LoginBloc bloc, BuildContext context) async{
+  _registro(LoginBloc bloc, BuildContext context) async{
     
-    Map info = await userProvider.login(bloc.email, bloc.pass);
+    Map info = await userProvider.nuevoUsuario(bloc.email, bloc.pass);
 
     if(info['ok']){
       Navigator.of(context).pushReplacementNamed(HomePage.routeName);
@@ -214,6 +213,7 @@ class LoginPage extends StatelessWidget {
       utils.mostrarAlert(context,info['error']);
     }
     
+
 
   }
 }
