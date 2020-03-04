@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:loginuser/src/bloc/login_bloc.dart';
+import 'package:loginuser/src/bloc/productos_bloc.dart';
 export 'package:loginuser/src/bloc/login_bloc.dart';
 
 
@@ -12,6 +13,8 @@ class Provider extends InheritedWidget{
   //el recurso al cual todos en el arbol van a tener acceso a travez de mi.
   static Provider _instancia;
   final loginBloc = LoginBloc();
+  final _productosBlock = ProductosBloc();
+
 
   factory Provider({Key key, Widget child }){
 
@@ -31,6 +34,11 @@ class Provider extends InheritedWidget{
   //metodo para devolver la instancia de lo tengo.
   static LoginBloc of(BuildContext context){
     return context.dependOnInheritedWidgetOfExactType<Provider>().loginBloc;
+    
+  }
+
+  static ProductosBloc productosBlock(BuildContext context){
+    return context.dependOnInheritedWidgetOfExactType<Provider>()._productosBlock;
     
   }
 }

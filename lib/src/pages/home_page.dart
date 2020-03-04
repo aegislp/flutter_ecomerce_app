@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loginuser/src/bloc/productos_bloc.dart';
 import 'package:loginuser/src/bloc/provider.dart';
 import 'package:loginuser/src/pages/producto_page.dart';
 import 'package:loginuser/src/providers/productos_provider.dart';
@@ -9,18 +10,17 @@ import 'package:loginuser/src/widgets/slide_right_bg_widget.dart';
 class HomePage extends StatelessWidget {
 
   static final routeName = 'home';
-  final provider = ProductosProvider();
-
   @override
   Widget build(BuildContext context) {
     
-    final bloc = Provider.of(context);
+    final productosBloc = Provider.productosBlock(context);
+    productosBloc.cargarProductos();
 
     return Scaffold(
       appBar: AppBar(
         title: Text("Home Page")
       ),
-      body: _createListadoProductos(context),
+      body: _createListadoProductos(context, productosBloc),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add,),
         onPressed: () {_agregarItem(context);},
@@ -29,9 +29,9 @@ class HomePage extends StatelessWidget {
     );
   }
 
- Widget _createListadoProductos(BuildContext context) {
-   return FutureBuilder(
-     future: provider.cargarProductos(),
+ Widget _createListadoProductos(BuildContext context, ProductosBloc productosBloc) {
+   return StreamBuilder(
+     stream: productosBloc.productosStream,
      builder: (BuildContext context, AsyncSnapshot<List<ProductoModel>>  snapshot){
 
       if(!snapshot.hasData) return Container(child: CircularProgressIndicator());
@@ -40,13 +40,13 @@ class HomePage extends StatelessWidget {
 
       return ListView.builder(
         itemCount: productos.length,
-        itemBuilder: (BuildContext context, int index) => _crearItem(productos[index],context),
+        itemBuilder: (BuildContext context, int index) => _crearItem(productos[index],context,productosBloc),
       );
 
      },
    );
  }
- Widget _crearItem(ProductoModel producto, BuildContext context){
+ Widget _crearItem(ProductoModel producto, BuildContext context, ProductosBloc productosBloc){
 
     return Dismissible(
       key: ValueKey(producto.id), 
@@ -68,7 +68,7 @@ class HomePage extends StatelessWidget {
         ),
       ),
       onDismissed: (direction){
-        provider.borrarProducto(producto.id);
+        productosBloc.borrarProducto(producto.id);
       },
     );
  }

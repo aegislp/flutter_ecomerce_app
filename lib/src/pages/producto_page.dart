@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:loginuser/src/bloc/productos_bloc.dart';
+import 'package:loginuser/src/bloc/provider.dart';
 import 'package:loginuser/src/models/producto_model.dart';
 import 'package:loginuser/src/providers/productos_provider.dart';
 import 'package:loginuser/src/utils/utils.dart' as utils;
@@ -20,8 +22,7 @@ class _ProductoPageState extends State<ProductoPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   ProductoModel producto = new ProductoModel();
-
-  final ProductosProvider productosProvider = new ProductosProvider();
+  ProductosBloc productosBloc;
 
   bool _guardando =  false;
 
@@ -31,6 +32,7 @@ class _ProductoPageState extends State<ProductoPage> {
   Widget build(BuildContext context) {
 
     final ProductoModel prodData = ModalRoute.of(context).settings.arguments;
+    productosBloc = Provider.productosBlock(context);
 
     if(prodData != null){
       producto = prodData;
@@ -115,24 +117,21 @@ class _ProductoPageState extends State<ProductoPage> {
   }
 
   void _submit(BuildContext context) async{
-    print("sva");
     if(!fromKey.currentState.validate()) return;
 
     fromKey.currentState.save();
-    print("saved");
-    print(producto.titulo);
-    print(producto.valor);
+   
 
     setState(() { _guardando =  true;});
 
     if(file!=null){
-      producto.fotoUrl = await productosProvider.subirImage(file);
+      producto.fotoUrl = await productosBloc.subirFoto(file);
     }
     if(producto.id == null ){
-      productosProvider.crearProdcuto(producto);
+      productosBloc.agregarProducto(producto);
       mostrarSnakBar("Producto Creado");
     }else{
-      productosProvider.editarProdcuto(producto);
+      productosBloc.editarProducto(producto);
       mostrarSnakBar("Producto Actualizado");
     }
 
